@@ -3,9 +3,9 @@ import os
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from openai import OpenAI
-
-# Create folders if they don't exist
+#  Folder contain txt render by OCR
 INPUT_FOLDER = "./images"
+# Folder contain txt responses
 OUTPUT_FOLDER = "./responses"
 prompt = (
     "Voici un texte mal formaté contenant des informations sur des ressources. "
@@ -59,12 +59,11 @@ prompt = (
     "]"
 )
 
-
-# prompt = ("I give you a text with values inside, this values are ressources, category, level and price, extract name, category and value, the category is redondant value, remove currency logo if found ")
+# Create folders if not exists
 os.makedirs(INPUT_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
-# Initialize OpenAI client
+# Get API_KEY on os env var
 api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
     raise ValueError("Please set your OPENAI_API_KEY environment variable")
@@ -74,20 +73,16 @@ client = OpenAI(api_key=api_key)
 
 class FileProcessor(FileSystemEventHandler):
     def on_created(self, event):
-        # Skip if it's a directory or not a text file
         if event.is_directory or not event.src_path.endswith('.txt'):
             return
 
         try:
-            # Wait briefly to ensure file is completely written
             time.sleep(1)
             print(f"[OPENAI] Processing new file: {event.src_path}")
 
-            # Read the file
             with open(event.src_path, 'r') as file:
                 content = file.read()
 
-            # Analyze the content using OpenAI
             response = client.chat.completions.create(
                 model="gpt-4",
                 messages=[
@@ -97,14 +92,11 @@ class FileProcessor(FileSystemEventHandler):
                 ]
             )
 
-            # Save the analysis
             filename = os.path.basename(event.src_path)
             output_path = os.path.join(OUTPUT_FOLDER, f"{filename}_analysis.txt")
             with open(output_path, 'w') as file:
                 file.write(response.choices[0].message.content)
 
-            # Delete original file after processing
-            # os.remove(event.src_path)
             print(f"[OPENAI] Analysis saved to: {output_path}")
 
         except Exception as error:
@@ -112,7 +104,6 @@ class FileProcessor(FileSystemEventHandler):
 
 
 def start_monitoring():
-    # Create and start the file monitor
     file_handler = FileProcessor()
     observer = Observer()
     observer.schedule(file_handler, INPUT_FOLDER, recursive=False)
