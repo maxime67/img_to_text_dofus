@@ -34,8 +34,17 @@ class ImageProcessor(FileSystemEventHandler):
             cv2.waitKey(3000)
             cv2.destroyAllWindows()
             # Get the text from the modify image
-            text = pytesseract.image_to_string(clean_image)
+            # text = pytesseract.image_to_string(clean_image)
+            custom_config = r'--oem 3 --psm 1'  # PSM 1 automatically detects page orientation
 
+            # Get the text from the modified image with orientation detection
+            text = pytesseract.image_to_string(
+                clean_image,
+                config=custom_config,
+                lang='eng'  # Specify language (optional)
+            )
+            # Format the return into horizontal string
+            # text = ' '.join(text.split())
             output_path = f"{image_path}_ocr.txt"
 
             with open(output_path, 'w', encoding='utf-8') as file:
@@ -63,7 +72,7 @@ class ImageProcessor(FileSystemEventHandler):
             os.rename(original_path, new_path)
             print(f"[OCR] Renamed file to: {new_filename}")
             if self.process_image(new_path):
-                os.remove(new_path)
+                # os.remove(new_path)
                 print(f"[OCR] Deleted processed image: {new_filename}")
         except Exception as error:
             print(f"[OCR] Error handling file: {str(error)}")

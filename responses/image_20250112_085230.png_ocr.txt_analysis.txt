@@ -1,0 +1,35 @@
+Voici les informations transformées et organisées en tableau JSON :
+
+```json
+[
+    { "Nom": "Ivre", "Catégorie": "Alliage", "Prix": 180 },
+    { "Nom": "Ardonite", "Catégorie": "Alliage", "Prix": 200 },
+    { "Nom": "Pyrute", "Catégorie": "Alliage", "Prix": 180 },
+    { "Nom": "Plaque d'acier", "Catégorie": "Alliage", "Prix": 190 },
+    { "Nom": "Kriptonite", "Catégorie": "Alliage", "Prix": 120 },
+    { "Nom": "Rutile", "Catégorie": "Alliage", "Prix": 160 },
+    { "Nom": "Kouartz", "Catégorie": "Alliage", "Prix": 190 },
+    { "Nom": "Bakélite", "Catégorie": "Alliage", "Prix": 80 },
+    { "Nom": "Kobalite", "Catégorie": "Alliage", "Prix": 140 },
+    { "Nom": "Magnésite", "Catégorie": "Alliage", "Prix": 60 },
+    { "Nom": "Ebonite", "Catégorie": "Alliage", "Prix": 40 },
+    { "Nom": "Aluminite", "Catégorie": "Alliage", "Prix": 20 },
+    { "Nom": "Alliage", "Catégorie": "Alliage", "Prix": 700 },
+    { "Nom": "Alliage", "Catégorie": "Alliage", "Prix": 361 },
+    { "Nom": "Alliage", "Catégorie": "Alliage", "Prix": 21449 },
+    { "Nom": "Alliage", "Catégorie": "Alliage", "Prix": 14 },
+    { "Nom": "Alliage", "Catégorie": "Alliage", "Prix": 862 },
+    { "Nom": "Alliage", "Catégorie": "Alliage", "Prix": 14524 },
+    { "Nom": "Alliage", "Catégorie": "Alliage", "Prix": 12345 },
+    { "Nom": "Alliage", "Catégorie": "Alliage", "Prix": 10 },
+    { "Nom": "Alliage", "Catégorie": "Alliage", "Prix": 493 },
+    { "Nom": "Alliage", "Catégorie": "Alliage", "Prix": 9272 },
+    { "Nom": "Alliage", "Catégorie": "Alliage", "Prix": 7 },
+    { "Nom": "Alliage", "Catégorie": "Alliage", "Prix": 305 },
+    { "Nom": "Alliage", "Catégorie": "Alliage", "Prix": 6 },
+    { "Nom": "Alliage", "Catégorie": "Alliage", "Prix": 402 },
+    { "Nom": "Alliage", "Catégorie": "Alliage", "Prix": 4008 },
+    { "Nom": "Alliage", "Catégorie": "Alliage", "Prix": 2459 },
+    { "Nom": "Alliage", "Catégorie": "Alliage", "Prix": 270 }
+]
+```

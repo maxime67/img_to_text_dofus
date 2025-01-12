@@ -3,68 +3,19 @@ import os
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from openai import OpenAI
+
 #  Folder contain txt render by OCR
 INPUT_FOLDER = "./images"
 # Folder contain txt responses
 OUTPUT_FOLDER = "./responses"
-prompt = (
-    "Voici un texte mal formaté contenant des informations sur des ressources. "
-    "Chaque ressource possède les attributs suivants : "
-    "- Nom "
-    "- Catégorie (identique pour toutes les ressources, déductible du texte) "
-    "- Prix (sans symboles ou caractères inutiles après le prix, comme €, *, 4€, etc.). "
-    "\n\n"
-    "Instructions de traitement :\n"
-    "1. Reformatez et triez ces informations dans un tableau organisé avec les colonnes suivantes : "
-    "- Nom "
-    "- Catégorie "
-    "- Prix "
-    "\n\n"
-    "2. Règles et contraintes : "
-    "- Ignorez les informations inutiles ou redondantes (par exemple, les répétitions de la catégorie ou les éléments qui n’appartiennent pas aux champs ci-dessus). "
-    "- Chaque ligne du texte correspond à une valeur unique et ne doit pas être associée à plusieurs noms ou prix. "
-    "- Si un prix est suivi de caractères inutiles (par exemple, '*', '€', '4€', ou tout autre caractère ou suite sans signification), ces caractères doivent être ignorés. "
-    " Il est très improbable qu'un prix soit un multiple de 10, si tu considère cela, c'est une erreur "
-    "\n\n"
-    "3. Sortie attendue : "
-    "- Fournissez un objet JSON distinct pour chaque ressource avec les champs : "
-    '{ "Nom": "<Nom de la ressource>", "Catégorie": "<Catégorie de la ressource>", "Prix": <Prix de la ressource> } '
-    "- Les objets JSON doivent être prêts à être insérés dans une base MongoDB. "
-    "\n\n"
-    "4. Attention : "
-    "- Vous n’avez pas besoin de traiter ou inclure le niveau (Level) de chaque ressource. "
-    "\n\n"
-    "Correspondance des informations : "
-    "- Le premier 'Nom' correspond au premier 'Prix', et ainsi de suite. "
-    "- La catégorie est déduite une seule fois (puisqu'elle est identique pour toutes les ressources). "
-    "\n\n"
-    "Exemple de traitement : "
-    "Entrée :\n"
-    "Nom: Ressource1\n"
-    "Catégorie: TypeA\n"
-    "Prix: 1200€\n"
-    "Level: 5\n"
-    "*texte inutile*\n"
-    "Nom: Ressource2\n"
-    "Prix: 950 *\n"
-    "Catégorie: TypeA\n"
-    "Level: 3\n"
-    "Nom: Ressource3\n"
-    "Prix: 1500€\n"
-    "\n"
-    "Sortie JSON : "
-    "[ "
-    '{ "Nom": "Ressource1", "Catégorie": "TypeA", "Prix": 1200 }, '
-    '{ "Nom": "Ressource3", "Catégorie": "TypeA", "Prix": 1500 } '
-    "]"
-)
+
 
 # Create folders if not exists
 os.makedirs(INPUT_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
 # Get API_KEY on os env var
-api_key = os.getenv("OPENAI_API_KEY")
+api_key = ""
 if not api_key:
     raise ValueError("Please set your OPENAI_API_KEY environment variable")
 
@@ -82,14 +33,34 @@ class FileProcessor(FileSystemEventHandler):
 
             with open(event.src_path, 'r') as file:
                 content = file.read()
+            import base64
+            from openai import OpenAI
+
+            client = OpenAI()
+
+            # Path to your image
+            image_path = "path_to_your_image.jpg"
+
+            # Getting the base64 string
+            base64_image = encode_image(image_path)
 
             response = client.chat.completions.create(
-                model="gpt-4",
+                model="gpt-4o-mini",
                 messages=[
-                    {"role": "system",
-                     "content": prompt},
-                    {"role": "user", "content": content}
-                ]
+                    {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": prompt,
+                            },
+                            {
+                                "type": "image_url",
+                                "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"},
+                            },
+                        ],
+                    }
+                ],
             )
 
             filename = os.path.basename(event.src_path)
